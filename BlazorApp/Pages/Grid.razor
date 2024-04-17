@@ -1,0 +1,40 @@
+﻿@page "/grid"
+@inject HttpClient HttpClient
+
+
+<div style="display: flex; align-items: center; margin-bottom: 16px">
+<RadzenButton Click="@ClearSelection" Text="Clear Selection" />
+    @if (selectedForecasts?.Any() == true)
+{
+<div style="margin-left: 16px">
+            Selected forecast: @selectedForecasts[0].Summary 
+</div>
+}
+</div>
+
+<RadzenDataGrid AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="@pageSize"
+                AllowSorting="true" Data="@forecasts" ColumnWidth="200px"
+            SelectionMode="DataGridSelectionMode.Single" @bind-Value=@selectedForecasts>
+    <Columns>
+        <RadzenDataGridColumn TItem="Weather.WeatherForecast" Property="Summary" Title="Summary" />
+        <RadzenDataGridColumn TItem="Weather.WeatherForecast" Property="TemperatureC" Title="TemperatureC" />
+        <RadzenDataGridColumn TItem="Weather.WeatherForecast" Property="Date" Title="Date" FormatString="{0:d}" />
+        <RadzenDataGridColumn TItem="Weather.WeatherForecast" Property="TemperatureF" Title="TemperatureF" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    private int pageSize = 10;
+    private IList<Weather.WeatherForecast> forecasts;
+    private IList<Weather.WeatherForecast> selectedForecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await HttpClient.GetFromJsonAsync<IList<Weather.WeatherForecast>>("WeatherForecast/get");
+    }
+
+    void ClearSelection()
+    {
+        selectedForecasts = null;
+    }
+}

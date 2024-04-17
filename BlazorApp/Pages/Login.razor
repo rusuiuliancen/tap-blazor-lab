@@ -1,0 +1,24 @@
+﻿@page "/login"
+@inject HttpClient HtppClient
+<RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
+    
+    <RadzenTemplateForm Data=@("SimpleLogin")>
+        <RadzenLogin
+            Username="@Username"
+            Password="@Password"
+            Login="OnLogin"
+            AllowRegister="false" AllowResetPassword="false" />
+    </RadzenTemplateForm>
+    
+</RadzenCard>
+
+@code {
+    private string Username { get; set; }
+    private string Password { get; set; }
+
+    private void OnLogin(LoginArgs args)
+    {
+        var rsponse = HtppClient.GetFromJsonAsync<string>($"https://localhost:7173/api/user/login?username={args.Username}&password={args.Password}");
+    }
+
+}
